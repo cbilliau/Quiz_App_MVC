@@ -40,7 +40,7 @@ var QUESTIONS = [
         correct: 3
     }
 ];
-
+// View items
 var questionsPageElement = $('.questions-page');
 var questionCurrentElement = $('.question-current');
 var questionsTotalElement = $('.questions-total');
@@ -51,60 +51,66 @@ var resultsPageElement = $('.results-page');
 var scoreElement = $('.score');
 var restartButtonElement = $('.restart-button');
 
+// View
 var showResults = function() {
-    questionsPageElement.hide();
-    resultsPageElement.show();
+    questionsPageElement.hide(); // Hide question
+    resultsPageElement.show(); // Show anser
 };
-
+// View
 var showQuestions = function() {
-    resultsPageElement.hide();
-    questionsPageElement.show();
+    resultsPageElement.hide(); // Hide answer
+    questionsPageElement.show(); // Show question
 };
-
+// View
 var resetScore = function() {
-    scoreElement.text(0);
+    scoreElement.text(0); // Set score to 0
 };
-
+// View / Model
 var increaseScore = function() {
-    var score = parseInt(scoreElement.text(), 10);
-    scoreElement.text(score + 1);
+    var score = parseInt(scoreElement.text(), 10); // update var to current score
+    scoreElement.text(score + 1); // Post current score value
 };
-
+// View / Model
 var setQuestion = function(questionIndex) {
-    var question = QUESTIONS[questionIndex];
-    questionCurrentElement.text(questionIndex);
-    questionElement.text(question.text);
-    answersElement.empty();
-    for (var i=0; i<question.answers.length; i++) {
+    var question = QUESTIONS[questionIndex]; // Get question
+    questionCurrentElement.text(questionIndex); // Display question number
+    questionElement.text(question.text); // Display question
+    answersElement.empty(); // Empty answer area
+    for (var i=0; i<question.answers.length; i++) { // Display answer choices
         var answer = question.answers[i];
         answersElement.append('<li><button type="button">' + answer + '</button></li>');
     }
 };
-
+// Listen for answer choices
 answersElement.on('click', 'button', function() {
-    var choice = $(this).parent().index();
-    var questionIndex = parseInt(questionCurrentElement.text(), 10);
-    var question = QUESTIONS[questionIndex];
+    // View item
+    var choice = $(this).parent().index(); // Set var to answer chosen
+    // View item
+    var questionIndex = parseInt(questionCurrentElement.text(), 10); // Set questionIndex to the diplayed question number
+    // Model item
+    var question = QUESTIONS[questionIndex]; // Assign a question to var
+    // Model item
     if (question.correct === choice) {
-        increaseScore();
+        increaseScore(); // If choice is correct, increase score
     }
 
     if (questionIndex + 1 < QUESTIONS.length) {
-        setQuestion(questionIndex + 1);
+        setQuestion(questionIndex + 1); // Call method to display next question
     }
     else {
-        showResults();
+        showResults(); // show results end game
     }
 });
 
+// View
 restartButtonElement.click(function() {
     setQuestion(0);
     resetScore();
     showQuestions();
 });
 
-$(document).ready(function() {
-    questionsTotalElement.text(QUESTIONS.length);
-    setQuestion(0);
-});
 
+$(document).ready(function() {
+    questionsTotalElement.text(QUESTIONS.length); // View item
+    setQuestion(0); // Kicks off quiz by setting up first question
+});
