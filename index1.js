@@ -100,6 +100,7 @@ function Quiz(questions) {
       */
     Quiz.prototype.checkUserAnswer = function (userAnswer) {
       var question = this.questions[this.currentQuestion];
+      console.log(question);
       return question.answers.indexOf(userAnswer) === question.correct;
     };
     // METHOD: Add 1 to score
@@ -109,8 +110,7 @@ function Quiz(questions) {
 
 
 // -----------View----------
-function View(element) {
-  this.element = $(element);
+function View() {
 };
     // METHOD: Display question & answer choices
     View.prototype.displayQuestionAndChoices = function (questionIndex, question, answers) {
@@ -119,20 +119,12 @@ function View(element) {
       answersElement.empty();
       for (var i=0; i<answers.length; i++) {
           var answer = answers[i];
-          answersElement.append('<li><button type="button">' + answer + '</button></li>');
+          answersElement.append('<li><button type="button" class"button">' + answer + '</button></li>');
       }
     };
     // METHOD: Display score
     View.prototype.displayScore = function () {
       scoreElement.text(quizScore);
-    };
-    // METHOD: Listener
-    View.prototype.retrieveAnswer = function () {
-      answersElement.on('click', 'button', function() {
-        var choice = $(this).parent().index();
-        console.log(choice);
-        return choice;
-      });
     };
 
 // ---------Controller----------
@@ -151,15 +143,14 @@ function Controller(model, view) {
     };
 
     // Submit Answer
-    Controller.prototype.onUserSubmitAnswer = function () {
-      var answer = this.view.retrieveAnswer();
+    Controller.prototype.onUserSubmitAnswer = function (answer) {
       var response = this.model.checkUserAnswer(answer);
       console.log(response);
       if (response) {
         this.model.keepScore();
         var nextQuestion = this.model.moveToNextQuestion();
         if (typeof nextQuestion === 'number') {
-          this.view.displayQuestion(nextQuestion);
+          this.view.displayQuestionAndChoices(nextQuestion);
         } else {
           this.view.displayFinalScore();
         }
@@ -171,8 +162,14 @@ var quizScore = 0;
 
 $(document).ready(function()  {
   var quiz = new Quiz(QUESTIONS);
-  var view = new View('button');
+  var view = new View();
   var controller = new Controller(quiz, view);
+
+  $('ul').on('click', 'li', function() {
+    var choice = $(this).text();
+    console.log(choice);
+    controller.onUserSubmitAnswer(choice);
+  });
 });
 
 // Process
