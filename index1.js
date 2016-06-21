@@ -51,18 +51,17 @@ var resultsPageElement = $('.results-page');
 var scoreElement = $('.score');
 var restartButtonElement = $('.restart-button');
 
-// Model
 
-var quizScore = 0;
 
+// -------Model---------
 function Quiz(questions) {
-  this.questions = quesitons;
+  this.questions = questions;
   this.currentQuestion = null;
 }
     /**
       * METHOD: Move to next question
       * increments current ques by 1
-      * returns integer fir curr ques or false if end of quiz
+      * returns integer for curr ques or false if end of quiz
       */
     Quiz.prototype.moveToNextQuestion = function () {
       if (this.currentQuestion) {
@@ -79,21 +78,106 @@ function Quiz(questions) {
           return this.currentQuestion;
         }
       };
-
-    Quiz.prototype.setMultipleChoice = function () {
+    Quiz.prototype.getQuestion = function (questionIndex) {
+      return QUESTIONS[questionIndex].text;
+    }
+    /**
+      * METHOD: Create multi-choice answer
+      * creates array w/answer choices
+      * returns array
+      */
+    Quiz.prototype.getAnswerChoices = function (questionIndex) {
       var answerChoices = [];
-      var question = this.questions(this.currentQuestion)
+      var question = QUESTIONS[questionIndex].answers;
       for (var i = 0; i < question.length; i++) {
         answerChoices.push(question[i]);
       };
       return answerChoices;
     };
-
+    /** METHOD: Check answer
+      * Accept user's answer choice
+      * returns ture or false
+      */
     Quiz.prototype.checkUserAnswer = function (userAnswer) {
       var question = this.questions[this.currentQuestion];
       return question.answers.indexOf(userAnswer) === question.correct;
     };
-
+    // METHOD: Add 1 to score
     Quiz.prototype.keepScore = function () {
       quizScore += 1;
     };
+
+
+// -----------View----------
+function View(element) {
+  this.element = $(element);
+};
+    // METHOD: Display question & answer choices
+    View.prototype.displayQuestionAndChoices = function (questionIndex, question, answers) {
+      questionCurrentElement.text(questionIndex);
+      questionElement.text(question);
+      answersElement.empty();
+      for (var i=0; i<answers.length; i++) {
+          var answer = answers[i];
+          answersElement.append('<li><button type="button">' + answer + '</button></li>');
+      }
+    };
+    // METHOD: Display score
+    View.prototype.displayScore = function () {
+      scoreElement.text(quizScore);
+    };
+    // METHOD: Listener
+    View.prototype.retrieveAnswer = function () {
+      answersElement.on('click', 'button', function() {
+        var choice = $(this).parent().index();
+        console.log(choice);
+        return choice;
+      });
+    };
+
+// ---------Controller----------
+function Controller(model, view) {
+  this.model = model;
+  this.view = view;
+  this.startQuiz();
+
+};
+    // Start quiz
+    Controller.prototype.startQuiz = function () {
+      var questionIndex = this.model.moveToNextQuestion();
+      var question = this.model.getQuestion(questionIndex);
+      var answerChoices = this.model.getAnswerChoices(questionIndex);
+      this.view.displayQuestionAndChoices(questionIndex, question, answerChoices);
+    };
+
+    // Submit Answer
+    Controller.prototype.onUserSubmitAnswer = function () {
+      var answer = this.view.retrieveAnswer();
+      var response = this.model.checkUserAnswer(answer);
+      console.log(response);
+      if (response) {
+        this.model.keepScore();
+        var nextQuestion = this.model.moveToNextQuestion();
+        if (typeof nextQuestion === 'number') {
+          this.view.displayQuestion(nextQuestion);
+        } else {
+          this.view.displayFinalScore();
+        }
+      }
+    };
+
+// Variables
+var quizScore = 0;
+
+$(document).ready(function()  {
+  var quiz = new Quiz(QUESTIONS);
+  var view = new View('button');
+  var controller = new Controller(quiz, view);
+});
+
+// Process
+  // Set game up - model moveToNextQuestion
+  // Get question - model getquestion
+  // Get answer choices - model getAnswerChoices
+  // Display Question/answer - view displayQuestion
+  // Submit answer (check ans, update score) - Controller
