@@ -60,6 +60,10 @@ function Quiz(questions) {
   this.questions = questions;
   this.currentQuestion = null;
 }
+    Quiz.prototype.questionsLength = function () {
+      var questions = (QUESTIONS.length);
+      return questions;
+    };
     /**
       * METHOD: Move to next question
       * increments current ques by 1
@@ -68,18 +72,15 @@ function Quiz(questions) {
     Quiz.prototype.moveToNextQuestion = function () {
       if (typeof this.currentQuestion === 'number') {
         ++this.currentQuestion;
-        console.log('line 71 '+this.currentQuestion);
+        console.log('moveToNextQuestion '+this.currentQuestion);
         if (this.currentQuestion >= this.questions.length) {
           // end of Quiz
           return false;
           } else {
             return this.currentQuestion;
-
-            // controller.playQuiz();
           }
         } else {
           this.currentQuestion = 0;
-          console.log('currentQuestion = '+ this.currentQuestion);
           return this.currentQuestion;
         }
       };
@@ -111,8 +112,11 @@ function Quiz(questions) {
     // METHOD: Add 1 to score
     Quiz.prototype.keepScore = function () {
       quizScore += 1;
-      console.log('score '+quizScore);
     };
+    // METHOD: Reset score
+    Quiz.prototype.resetScore = function () {
+      quizScore = 0;
+    }
 
 
 // -----------View----------
@@ -128,23 +132,38 @@ function View() {
           answersElement.append('<li><button type="button" class"button">' + answer + '</button></li>');
       }
     };
-    // METHOD: Display score
-    View.prototype.displayScore = function () {
+    // METHOD: Hide questions / show results
+    View.prototype.displayFinalScore = function () {
+      questionsPageElement.hide(); // Hide question
+      resultsPageElement.show(); // Show anser
       scoreElement.text(quizScore);
     };
-
+    View.prototype.displayQuestions = function () {
+      questionsPageElement.show(); // Show question
+      resultsPageElement.hide(); // Hide anser
+    };
+    View.prototype.setQuestionNumbers = function (totalQuestions) {
+      questionsTotalElement.text(totalQuestions);
+    }
+    View.prototype.setCurrentQuestionNumber = function (totalQuestions) {
+      questionCurrentElement.text(totalQuestions);
+    }
 // ---------Controller----------
 function Controller(model, view) {
   this.model = model;
   this.view = view;
   this.playQuiz();
-
 };
-    // Start quiz
+    // Play quiz
     Controller.prototype.playQuiz = function () {
+      var numberOfQuestions = this.model.questionsLength();
+      // display question number total
+      this.view.setQuestionNumbers(numberOfQuestions);
       // Get index of next question
       var questionIndex = this.model.moveToNextQuestion();
-      console.log('line 145 '+questionIndex);
+      // display current question number
+      this.view.setCurrentQuestionNumber(questionIndex);
+      console.log('.playQuiz ques index = '+questionIndex);
       // If index is a number
       if (typeof questionIndex === 'number') {
         // Get question, answer choices, and send to view
@@ -154,7 +173,7 @@ function Controller(model, view) {
       } else {
         // end game
         console.log('game end');
-        // this.view.displayFinalScore();
+        this.view.displayFinalScore();
       }
     };
 
@@ -162,11 +181,11 @@ function Controller(model, view) {
     Controller.prototype.onUserSubmitAnswer = function (answer) {
       // Determine if answer is true (corr) or flase (wrong)
       var response = this.model.checkUserAnswer(answer);
-      console.log(response);
+      console.log('Is user answer correct? '+ response);
       if (response) {
         // If true, score and got to next question
         this.model.keepScore();
-        this.view.displayScore();
+        // this.view.displayScore();
         this.playQuiz();
       } else {
         this.playQuiz();
@@ -183,16 +202,17 @@ $(document).ready(function()  {
   var controller = new Controller(quiz, view);
 
 // Listen for answer choices
-  $('ul').on('click', 'li', function() {
+  $(answersElement).on('click', 'li', function() {
     var choice = $(this).text();
-    console.log(choice);
+    console.log('User clicked on ' + choice);
     controller.onUserSubmitAnswer(choice);
   });
-});
 
-// Process
-  // Set game up - model moveToNextQuestion
-  // Get question - model getquestion
-  // Get answer choices - model getAnswerChoices
-  // Display Question/answer - view displayQuestion
-  // Submit answer (check ans, update score) - Controller
+  $(restartButtonElement).on('click', function() {
+      controller.view.displayQuestions();
+      controller.quiz.resetScore();
+      var quiz = new Quiz(QUESTIONS);
+      var view = new View();
+      var controller = new Controller(quiz, view);
+  });
+});
