@@ -59,6 +59,7 @@ var restartButtonElement = $('.restart-button');
 function Quiz(questions) {
   this.questions = questions;
   this.currentQuestion = null;
+  this.score = 0;
   console.log('Quiz constructor - this.currentQuestion set to ' + this.currentQuestion);
 }
       // Get questions length for score board
@@ -119,13 +120,18 @@ function Quiz(questions) {
 
     // METHOD: Add 1 to score
     Quiz.prototype.keepScore = function () {
-      quizScore += 1;
+      this.score += 1;
     };
 
     // METHOD: Reset score
     Quiz.prototype.resetScore = function () {
-      quizScore = 0;
+      this.score = 0;
     };
+
+    Quiz.prototype.resetQuiz = function () {
+      this.resetScore();
+      this.currentQuestion = null;
+    }
 
 // -----------View----------
 function View() {
@@ -142,10 +148,10 @@ function View() {
     };
 
     // METHOD: Hide questions / show results
-    View.prototype.displayFinalScore = function () {
+    View.prototype.displayFinalScore = function (score) {
       questionsPageElement.hide(); // Hide question
       resultsPageElement.show(); // Show anser
-      scoreElement.text(quizScore);
+      scoreElement.text(score);
     };
 
     View.prototype.displayQuestions = function () {
@@ -163,11 +169,15 @@ function View() {
 // ---------Controller----------
 function Controller(model, view) {
   this.model = model;
-  this.model.resetScore();
   this.view = view;
-  this.view.displayQuestions();
-  this.playQuiz();
 };
+    Controller.prototype.init = function() {
+      this.model.resetScore();
+      this.model.currentQuestion = null;
+      this.view.displayQuestions();
+      this.playQuiz();
+    };
+    
     // Play quiz
     Controller.prototype.playQuiz = function () {
       var numberOfQuestions = this.model.questionsLength();
@@ -185,7 +195,7 @@ function Controller(model, view) {
         this.view.displayQuestionAndChoices(questionIndex, question, answerChoices);
       } else {
           // end game
-        this.view.displayFinalScore();
+        this.view.displayFinalScore(this.model.score);
       }
     };
 
@@ -203,14 +213,13 @@ function Controller(model, view) {
       }
     };
 
-// Variables
-var quizScore = 0;
+var quiz = new Quiz(QUESTIONS);
+var view = new View();
+var controller = new Controller(quiz, view);
 
 // ready
 $(document).ready(function()  {
-  var quiz = new Quiz(QUESTIONS);
-  var view = new View();
-  var controller = new Controller(quiz, view);
+  controller.init();
 
 // Listen for answer choices
   $(answersElement).on('click', 'li', function() {
@@ -220,11 +229,6 @@ $(document).ready(function()  {
 
 // Reset game
   $(restartButtonElement).on('click', function() {
-      var quiz = null,
-          view = null,
-          controller = null;
-      var quiz = new Quiz(QUESTIONS);
-      var view = new View();
-      var controller = new Controller(quiz, view);
+    controller.init();
   });
 });
