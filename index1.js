@@ -64,9 +64,10 @@ function Quiz(questions) {
       * returns integer for curr ques or false if end of quiz
       */
     Quiz.prototype.moveToNextQuestion = function () {
+      console.log('moveToNextQuestion - currentQuestion='+this.currentQuestion);
       if (this.currentQuestion) {
         ++this.currentQuestion;
-
+          console.log('moveToNextQuestion - currentQuestion='+this.currentQuestion);
         if (this.currentQuestion >= this.questions.length) {
           // end of Quiz
           return false;
@@ -100,12 +101,12 @@ function Quiz(questions) {
       */
     Quiz.prototype.checkUserAnswer = function (userAnswer) {
       var question = this.questions[this.currentQuestion];
-      console.log(question);
       return question.answers.indexOf(userAnswer) === question.correct;
     };
     // METHOD: Add 1 to score
     Quiz.prototype.keepScore = function () {
       quizScore += 1;
+      console.log('score '+quizScore);
     };
 
 
@@ -131,40 +132,48 @@ function View() {
 function Controller(model, view) {
   this.model = model;
   this.view = view;
-  this.startQuiz();
+  this.playQuiz();
 
 };
     // Start quiz
-    Controller.prototype.startQuiz = function () {
+    Controller.prototype.playQuiz = function () {
+      // Get index of next question
       var questionIndex = this.model.moveToNextQuestion();
-      var question = this.model.getQuestion(questionIndex);
-      var answerChoices = this.model.getAnswerChoices(questionIndex);
-      this.view.displayQuestionAndChoices(questionIndex, question, answerChoices);
+      // If index is a number
+      if (typeof questionIndex === 'number') {
+        // Get question, answer choices, and send to view
+        var question = this.model.getQuestion(questionIndex);
+        var answerChoices = this.model.getAnswerChoices(questionIndex);
+        this.view.displayQuestionAndChoices(questionIndex, question, answerChoices);
+      } else {
+        // end game
+        this.view.displayFinalScore();
+      }
     };
 
     // Submit Answer
     Controller.prototype.onUserSubmitAnswer = function (answer) {
+      // Determine if answer is true (corr) or flase (wrong)
       var response = this.model.checkUserAnswer(answer);
       console.log(response);
       if (response) {
+        // If true, score and got to next question
         this.model.keepScore();
-        var nextQuestion = this.model.moveToNextQuestion();
-        if (typeof nextQuestion === 'number') {
-          this.view.displayQuestionAndChoices(nextQuestion);
-        } else {
-          this.view.displayFinalScore();
-        }
+        this.view.displayScore();
+        this.playQuiz();
       }
     };
 
 // Variables
 var quizScore = 0;
 
+// Set classes
 $(document).ready(function()  {
   var quiz = new Quiz(QUESTIONS);
   var view = new View();
   var controller = new Controller(quiz, view);
 
+// Listen for answer choices
   $('ul').on('click', 'li', function() {
     var choice = $(this).text();
     console.log(choice);
