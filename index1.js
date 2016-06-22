@@ -1,3 +1,5 @@
+"use strict";
+
 var QUESTIONS = [
     {
         text: '<:48:x<:65:=<:6C:$=$=$$~<:03:+$~<:ffffffffffffffbd:+$<:ffffffffffffffb1:+$<:57:~$~<:18:x+$~<:03:+$~<:06:x-$x<:0e:x-$=x<:43:x-$',
@@ -64,10 +66,10 @@ function Quiz(questions) {
       * returns integer for curr ques or false if end of quiz
       */
     Quiz.prototype.moveToNextQuestion = function () {
-      console.log('moveToNextQuestion - currentQuestion='+this.currentQuestion);
-      if (this.currentQuestion) {
+      if (typeof this.currentQuestion === 'number') {
         ++this.currentQuestion;
-          console.log('moveToNextQuestion - currentQuestion='+this.currentQuestion);
+          console.log('currentQuestion = '+this.currentQuestion);
+          console.log(this.currentQuestion >= this.questions.length);
         if (this.currentQuestion >= this.questions.length) {
           // end of Quiz
           return false;
@@ -76,9 +78,11 @@ function Quiz(questions) {
           }
         } else {
           this.currentQuestion = 0;
+          console.log('currentQuestion = '+ this.currentQuestion);
           return this.currentQuestion;
         }
       };
+    // Pulls the question from QUESTIONS
     Quiz.prototype.getQuestion = function (questionIndex) {
       return QUESTIONS[questionIndex].text;
     }
@@ -147,7 +151,8 @@ function Controller(model, view) {
         this.view.displayQuestionAndChoices(questionIndex, question, answerChoices);
       } else {
         // end game
-        this.view.displayFinalScore();
+        console.log('game end');
+        // this.view.displayFinalScore();
       }
     };
 
