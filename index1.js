@@ -68,13 +68,14 @@ function Quiz(questions) {
     Quiz.prototype.moveToNextQuestion = function () {
       if (typeof this.currentQuestion === 'number') {
         ++this.currentQuestion;
-          console.log('currentQuestion = '+this.currentQuestion);
-          console.log(this.currentQuestion >= this.questions.length);
+        console.log('line 71 '+this.currentQuestion);
         if (this.currentQuestion >= this.questions.length) {
           // end of Quiz
           return false;
           } else {
-            this.currentQuestion;
+            return this.currentQuestion;
+
+            // controller.playQuiz();
           }
         } else {
           this.currentQuestion = 0;
@@ -143,6 +144,7 @@ function Controller(model, view) {
     Controller.prototype.playQuiz = function () {
       // Get index of next question
       var questionIndex = this.model.moveToNextQuestion();
+      console.log('line 145 '+questionIndex);
       // If index is a number
       if (typeof questionIndex === 'number') {
         // Get question, answer choices, and send to view
@@ -165,6 +167,8 @@ function Controller(model, view) {
         // If true, score and got to next question
         this.model.keepScore();
         this.view.displayScore();
+        this.playQuiz();
+      } else {
         this.playQuiz();
       }
     };
