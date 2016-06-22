@@ -59,11 +59,14 @@ var restartButtonElement = $('.restart-button');
 function Quiz(questions) {
   this.questions = questions;
   this.currentQuestion = null;
+  console.log('Quiz constructor - this.currentQuestion set to ' + this.currentQuestion);
 }
+      // Get questions length for score board
     Quiz.prototype.questionsLength = function () {
       var questions = (QUESTIONS.length);
       return questions;
     };
+
     /**
       * METHOD: Move to next question
       * increments current ques by 1
@@ -72,7 +75,7 @@ function Quiz(questions) {
     Quiz.prototype.moveToNextQuestion = function () {
       if (typeof this.currentQuestion === 'number') {
         ++this.currentQuestion;
-        console.log('moveToNextQuestion '+this.currentQuestion);
+
         if (this.currentQuestion >= this.questions.length) {
           // end of Quiz
           return false;
@@ -84,6 +87,7 @@ function Quiz(questions) {
           return this.currentQuestion;
         }
       };
+
     // Pulls the question from QUESTIONS
     Quiz.prototype.getQuestion = function (questionIndex) {
       return QUESTIONS[questionIndex].text;
@@ -93,6 +97,7 @@ function Quiz(questions) {
       * creates array w/answer choices
       * returns array
       */
+
     Quiz.prototype.getAnswerChoices = function (questionIndex) {
       var answerChoices = [];
       var question = QUESTIONS[questionIndex].answers;
@@ -101,23 +106,26 @@ function Quiz(questions) {
       };
       return answerChoices;
     };
+
     /** METHOD: Check answer
       * Accept user's answer choice
       * returns ture or false
       */
     Quiz.prototype.checkUserAnswer = function (userAnswer) {
       var question = this.questions[this.currentQuestion];
+      console.log('quiz.checkUserAnswer - this.currentQuestion = ' + this.currentQuestion);
       return question.answers.indexOf(userAnswer) === question.correct;
     };
+
     // METHOD: Add 1 to score
     Quiz.prototype.keepScore = function () {
       quizScore += 1;
     };
+
     // METHOD: Reset score
     Quiz.prototype.resetScore = function () {
       quizScore = 0;
-    }
-
+    };
 
 // -----------View----------
 function View() {
@@ -132,47 +140,51 @@ function View() {
           answersElement.append('<li><button type="button" class"button">' + answer + '</button></li>');
       }
     };
+
     // METHOD: Hide questions / show results
     View.prototype.displayFinalScore = function () {
       questionsPageElement.hide(); // Hide question
       resultsPageElement.show(); // Show anser
       scoreElement.text(quizScore);
     };
+
     View.prototype.displayQuestions = function () {
       questionsPageElement.show(); // Show question
       resultsPageElement.hide(); // Hide anser
     };
+
     View.prototype.setQuestionNumbers = function (totalQuestions) {
       questionsTotalElement.text(totalQuestions);
     }
     View.prototype.setCurrentQuestionNumber = function (totalQuestions) {
       questionCurrentElement.text(totalQuestions);
-    }
+    };
+
 // ---------Controller----------
 function Controller(model, view) {
   this.model = model;
+  this.model.resetScore();
   this.view = view;
+  this.view.displayQuestions();
   this.playQuiz();
 };
     // Play quiz
     Controller.prototype.playQuiz = function () {
       var numberOfQuestions = this.model.questionsLength();
-      // display question number total
+        // display question number total
       this.view.setQuestionNumbers(numberOfQuestions);
-      // Get index of next question
+        // Get index of next question
       var questionIndex = this.model.moveToNextQuestion();
-      // display current question number
+        // display current question number
       this.view.setCurrentQuestionNumber(questionIndex);
-      console.log('.playQuiz ques index = '+questionIndex);
-      // If index is a number
+        // If index is a number
       if (typeof questionIndex === 'number') {
-        // Get question, answer choices, and send to view
+          // Get question, answer choices, and send to view
         var question = this.model.getQuestion(questionIndex);
         var answerChoices = this.model.getAnswerChoices(questionIndex);
         this.view.displayQuestionAndChoices(questionIndex, question, answerChoices);
       } else {
-        // end game
-        console.log('game end');
+          // end game
         this.view.displayFinalScore();
       }
     };
@@ -181,7 +193,6 @@ function Controller(model, view) {
     Controller.prototype.onUserSubmitAnswer = function (answer) {
       // Determine if answer is true (corr) or flase (wrong)
       var response = this.model.checkUserAnswer(answer);
-      console.log('Is user answer correct? '+ response);
       if (response) {
         // If true, score and got to next question
         this.model.keepScore();
@@ -195,7 +206,7 @@ function Controller(model, view) {
 // Variables
 var quizScore = 0;
 
-// Set classes
+// ready
 $(document).ready(function()  {
   var quiz = new Quiz(QUESTIONS);
   var view = new View();
@@ -204,13 +215,14 @@ $(document).ready(function()  {
 // Listen for answer choices
   $(answersElement).on('click', 'li', function() {
     var choice = $(this).text();
-    console.log('User clicked on ' + choice);
     controller.onUserSubmitAnswer(choice);
   });
 
+// Reset game
   $(restartButtonElement).on('click', function() {
-      controller.view.displayQuestions();
-      controller.quiz.resetScore();
+      var quiz = null,
+          view = null,
+          controller = null;
       var quiz = new Quiz(QUESTIONS);
       var view = new View();
       var controller = new Controller(quiz, view);
