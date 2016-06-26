@@ -1,5 +1,5 @@
 
-var QUESTIONS = [
+const QUESTIONS = [
     {
         text: '<:48:x<:65:=<:6C:$=$=$$~<:03:+$~<:ffffffffffffffbd:+$<:ffffffffffffffb1:+$<:57:~$~<:18:x+$~<:03:+$~<:06:x-$x<:0e:x-$=x<:43:x-$',
         answers: [
@@ -42,12 +42,12 @@ var QUESTIONS = [
     }
 ];
 // View items
-var questionsPageElement = $('.questions-page');
-var questionCurrentElement = $('.question-current');
-var questionsTotalElement = $('.questions-total');
-var questionElement = $('.question');
-var answersElement = $('.answers');
+const questionsPageElement = $('.questions-page');
+const questionCurrentElement = $('.question-current');
+const questionsTotalElement = $('.questions-total');
+const questionElement = $('.question');
+const answersElement = $('.answers');
 
-var resultsPageElement = $('.results-page');
-var scoreElement = $('.score');
-var restartButtonElement = $('.restart-button');
+const resultsPageElement = $('.results-page');
+const scoreElement = $('.score');
+const restartButtonElement = $('.restart-button');

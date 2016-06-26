@@ -1,6 +1,6 @@
-require("./variables.js");
+require.ensure("./variables.js");
 
-// "use strict";
+"use strict";
 
 // -------Model---------
 function Quiz(questions) {
