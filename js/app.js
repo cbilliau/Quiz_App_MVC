@@ -1,1 +1,30 @@
-!function(e){function t(n){if(o[n])return o[n].exports;var s=o[n]={exports:{},id:n,loaded:!1};return e[n].call(s.exports,s,s.exports,t),s.loaded=!0,s.exports}var o={};return t.m=e,t.c=o,t.p="",t(0)}([function(e,t,o){"use strict";function n(e){this.questions=e,this.currentQuestion=null,console.log("Quiz constructor - this.currentQuestion set to "+this.currentQuestion)}function s(){}function r(e,t){this.model=e,this.model.resetScore(),this.view=t,this.view.displayQuestions(),this.playQuiz()}var i=o(1);console.log(i);var u=o(2);console.log(u),n.prototype.questionsLength=function(){var e=i.length;return e},n.prototype.moveToNextQuestion=function(){return"number"==typeof this.currentQuestion?(++this.currentQuestion,!(this.currentQuestion>=this.questions.length)&&this.currentQuestion):(this.currentQuestion=0,this.currentQuestion)},n.prototype.getQuestion=function(e){return i[e].text},n.prototype.getAnswerChoices=function(e){for(var t=[],o=i[e].answers,n=0;n<o.length;n++)t.push(o[n]);return t},n.prototype.checkUserAnswer=function(e){var t=this.questions[this.currentQuestion];return console.log("quiz.checkUserAnswer - this.currentQuestion = "+this.currentQuestion),t.answers.indexOf(e)===t.correct},n.prototype.keepScore=function(){h+=1},n.prototype.resetScore=function(){h=0},s.prototype.displayQuestionAndChoices=function(e,t,o){u.questionCurrentElement.text(e),u.questionElement.text(t),u.answersElement.empty();for(var n=0;n<o.length;n++){var s=o[n];u.answersElement.append('<li><button type="button" class"button">'+s+"</button></li>")}},s.prototype.displayFinalScore=function(){u.questionsPageElement.hide(),u.resultsPageElement.show(),u.scoreElement.text(h)},s.prototype.displayQuestions=function(){u.questionsPageElement.show(),u.resultsPageElement.hide()},s.prototype.setQuestionNumbers=function(e){u.questionsTotalElement.text(e)},s.prototype.setCurrentQuestionNumber=function(e){u.questionCurrentElement.text(e)},r.prototype.playQuiz=function(){var e=this.model.questionsLength();this.view.setQuestionNumbers(e);var t=this.model.moveToNextQuestion();if(this.view.setCurrentQuestionNumber(t),"number"==typeof t){var o=this.model.getQuestion(t),n=this.model.getAnswerChoices(t);this.view.displayQuestionAndChoices(t,o,n)}else this.view.displayFinalScore()},r.prototype.onUserSubmitAnswer=function(e){var t=this.model.checkUserAnswer(e);t?(this.model.keepScore(),this.playQuiz()):this.playQuiz()};var h=0;$(document).ready(function(){var e=new n(i),t=new s,o=new r(e,t);$(u.answersElement).on("click","li",function(){var e=$(this).text();o.onUserSubmitAnswer(e)}),$(u.restartButtonElement).on("click",function(){var e=null,t=null,e=new n(i),t=new s;new r(e,t)})})},function(e,t){"use strict";var o=[{text:"<:48:x<:65:=<:6C:$=$=$$~<:03:+$~<:ffffffffffffffbd:+$<:ffffffffffffffb1:+$<:57:~$~<:18:x+$~<:03:+$~<:06:x-$x<:0e:x-$=x<:43:x-$",answers:["0815","2B","BAM128","Barely"],correct:0},{text:"+0+0+0+0+0+0+0+2)+0+0+9)+7))+3)-0-0-0-0-0-0-0-9)+0+0+0+0+0+0+0+0+7)-8)+3)-6)-8)-7-0-0-0-0-0-0)",answers:["0815","2B","BAM128","Barely"],correct:1},{text:"*6*3p*4*3*2*0p*2*1*0pp>0*1*0p*5*4*0p*5*4*2*1*0p*4*3p*1*0p/+0p+0*6*5*2p+0*5*0p",answers:["0815","2B","BAM128","Barely"],correct:2},{text:"]xhhhhooooooooohhhhhhxooooooooxooooooxjjjxhoooohhhxhohhhhhhhxhhhhjjjhhhxhhhhooooooooohhhhhhxjjjxxjjjjjjjxjhhhhxjhhhhhhhhjjjhh~",answers:["0815","2B","BAM128","Barely"],correct:3}];e.exports=o},function(e,t){"use strict";var o={questionsPageElement:$(".questions-page"),questionCurrentElement:$(".question-current"),questionsTotalElement:$(".questions-total"),questionElement:$(".question"),answersElement:$(".answers"),resultsPageElement:$(".results-page"),scoreElement:$(".score"),restartButtonElement:$(".restart-button")};e.exports=o}]);
+"use strict";
+
+const $ = require('jquery');
+const VIS = require("./data/viewElements");
+const QUESTIONS = require('./data/questions');
+
+const Quiz = require('./modules/quiz');
+const Controller = require('./modules/controller');
+const View = require('./modules/view');
+
+const quiz = new Quiz(QUESTIONS);
+const view = new View();
+const controller = new Controller(quiz, view);
+
+// ready
+$(document).ready(function() {
+
+    controller.init();
+
+    // Listen for answer choices
+    $(VIS.answersElement).on('click', 'li', () => {
+        let choice = $(this).text();
+        controller.onUserSubmitAnswer(choice);
+    });
+
+    // Reset game
+    $(VIS.restartButtonElement).on('click', () => controller.init() );
+});
+
+
