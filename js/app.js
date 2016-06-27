@@ -44,11 +44,13 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
-	__webpack_require__(1);
+	var QUESTIONS = __webpack_require__(1);
+	console.log(QUESTIONS);
 
-	// "use strict";
+	var VIS = __webpack_require__(2);
+	console.log(VIS);
 
 	// -------Model---------
 	function Quiz(questions) {
@@ -126,32 +128,32 @@
 	function View() {};
 	// METHOD: Display question & answer choices
 	View.prototype.displayQuestionAndChoices = function (questionIndex, question, answers) {
-	    questionCurrentElement.text(questionIndex);
-	    questionElement.text(question);
-	    answersElement.empty();
+	    VIS.questionCurrentElement.text(questionIndex);
+	    VIS.questionElement.text(question);
+	    VIS.answersElement.empty();
 	    for (var i = 0; i < answers.length; i++) {
 	        var answer = answers[i];
-	        answersElement.append('<li><button type="button" class"button">' + answer + '</button></li>');
+	        VIS.answersElement.append('<li><button type="button" class"button">' + answer + '</button></li>');
 	    }
 	};
 
 	// METHOD: Hide questions / show results
 	View.prototype.displayFinalScore = function () {
-	    questionsPageElement.hide(); // Hide question
-	    resultsPageElement.show(); // Show anser
-	    scoreElement.text(quizScore);
+	    VIS.questionsPageElement.hide(); // Hide question
+	    VIS.resultsPageElement.show(); // Show anser
+	    VIS.scoreElement.text(quizScore);
 	};
 
 	View.prototype.displayQuestions = function () {
-	    questionsPageElement.show(); // Show question
-	    resultsPageElement.hide(); // Hide anser
+	    VIS.questionsPageElement.show(); // Show question
+	    VIS.resultsPageElement.hide(); // Hide anser
 	};
 
 	View.prototype.setQuestionNumbers = function (totalQuestions) {
-	    questionsTotalElement.text(totalQuestions);
+	    VIS.questionsTotalElement.text(totalQuestions);
 	};
 	View.prototype.setCurrentQuestionNumber = function (totalQuestions) {
-	    questionCurrentElement.text(totalQuestions);
+	    VIS.questionCurrentElement.text(totalQuestions);
 	};
 
 	// ---------Controller----------
@@ -207,13 +209,13 @@
 	    var controller = new Controller(quiz, view);
 
 	    // Listen for answer choices
-	    $(answersElement).on('click', 'li', function () {
+	    $(VIS.answersElement).on('click', 'li', function () {
 	        var choice = $(this).text();
 	        controller.onUserSubmitAnswer(choice);
 	    });
 
 	    // Reset game
-	    $(restartButtonElement).on('click', function () {
+	    $(VIS.restartButtonElement).on('click', function () {
 	        var quiz = null,
 	            view = null,
 	            controller = null;
@@ -229,6 +231,7 @@
 
 	'use strict';
 
+	// Questions
 	var QUESTIONS = [{
 	    text: '<:48:x<:65:=<:6C:$=$=$$~<:03:+$~<:ffffffffffffffbd:+$<:ffffffffffffffb1:+$<:57:~$~<:18:x+$~<:03:+$~<:06:x-$x<:0e:x-$=x<:43:x-$',
 	    answers: ['0815', '2B', 'BAM128', 'Barely'],
@@ -246,16 +249,29 @@
 	    answers: ['0815', '2B', 'BAM128', 'Barely'],
 	    correct: 3
 	}];
-	// View items
-	var questionsPageElement = $('.questions-page');
-	var questionCurrentElement = $('.question-current');
-	var questionsTotalElement = $('.questions-total');
-	var questionElement = $('.question');
-	var answersElement = $('.answers');
 
-	var resultsPageElement = $('.results-page');
-	var scoreElement = $('.score');
-	var restartButtonElement = $('.restart-button');
+	module.exports = QUESTIONS;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	// View items
+
+	var viewElements = {
+	  questionsPageElement: $('.questions-page'),
+	  questionCurrentElement: $('.question-current'),
+	  questionsTotalElement: $('.questions-total'),
+	  questionElement: $('.question'),
+	  answersElement: $('.answers'),
+	  resultsPageElement: $('.results-page'),
+	  scoreElement: $('.score'),
+	  restartButtonElement: $('.restart-button')
+	};
+
+	module.exports = viewElements;
 
 /***/ }
 /******/ ]);

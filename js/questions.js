@@ -1,4 +1,4 @@
-
+// Questions
 const QUESTIONS = [
     {
         text: '<:48:x<:65:=<:6C:$=$=$$~<:03:+$~<:ffffffffffffffbd:+$<:ffffffffffffffb1:+$<:57:~$~<:18:x+$~<:03:+$~<:06:x-$x<:0e:x-$=x<:43:x-$',
@@ -41,13 +41,5 @@ const QUESTIONS = [
         correct: 3
     }
 ];
-// View items
-const questionsPageElement = $('.questions-page');
-const questionCurrentElement = $('.question-current');
-const questionsTotalElement = $('.questions-total');
-const questionElement = $('.question');
-const answersElement = $('.answers');
 
-const resultsPageElement = $('.results-page');
-const scoreElement = $('.score');
-const restartButtonElement = $('.restart-button');
+module.exports = QUESTIONS;
