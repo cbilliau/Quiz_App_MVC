@@ -1,5 +1,5 @@
 // Questions
-const QUESTIONS = [
+module.exports = [
     {
         text: '<:48:x<:65:=<:6C:$=$=$$~<:03:+$~<:ffffffffffffffbd:+$<:ffffffffffffffb1:+$<:57:~$~<:18:x+$~<:03:+$~<:06:x-$x<:0e:x-$=x<:43:x-$',
         answers: [
@@ -41,5 +41,3 @@ const QUESTIONS = [
         correct: 3
     }
 ];
-
-module.exports = QUESTIONS;

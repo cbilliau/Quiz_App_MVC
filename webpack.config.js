@@ -1,14 +1,15 @@
 // Needed in order to call plugin
 var webpack = require('webpack');
+var packageData = require('./package.json');
 
 
 module.exports = {
     // Defines entry point for webpack to find requriements
-    entry: "./js/mvc.js",
+    entry: packageData.main,
     // Where wepack outputs the resulting file
     output: {
-        path: __dirname +"/js",
-        filename: "app.js"
+        path: __dirname +"/build",
+        filename: "bundle.js"
     },
     // Plugins for webpack
     plugins: [
